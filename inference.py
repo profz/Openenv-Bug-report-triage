@@ -33,22 +33,23 @@ def act(obs):
         )
         return Action(**json.loads(resp.choices[0].message.content))
     except Exception as e:
-        print(f"[error] {e}")
+        print(f"[error] {e}", flush=True)
         return Action(verdict="needs-info", severity="low", team="backend", needs_repro=True)
 
 if __name__ == "__main__":
+    task_name = "validity-check-v1"
     env = BugReportEnv("tasks/validity_check/reports.json", grader_fn=score_action)
     obs = env.reset(seed=42)
     done = False
     step = 0
 
-    print("START")
+    print(f"[START] task={task_name}", flush=True)
 
     while not done:
         action = act(obs)
         obs, reward, done, _ = env.step(action)
         step += 1
-        print(f"STEP {step} score={reward.score:.3f} {reward.explanation}")
+        print(f"[STEP] step={step} reward={reward.score:.3f}", flush=True)
 
     final = env.state()["mean_reward"]
-    print(f"END score={final:.3f}")
+    print(f"[END] task={task_name} score={final:.3f} steps={step}", flush=True)
