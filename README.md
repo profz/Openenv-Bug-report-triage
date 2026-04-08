@@ -1,4 +1,4 @@
-#---
+---
 title: Openenv Bug Triage
 emoji: 🐛
 colorFrom: blue
@@ -7,7 +7,8 @@ sdk: gradio
 sdk_version: "4.0.0"
 app_file: app.py
 pinned: false
---- OpenEnv — Bug Report Triage
+--- 
+# OpenEnv — Bug Report Triage
 
 An AI agent environment simulating real-world GitHub bug report triage.
 Implements the full [OpenEnv](https://huggingface.co/openenv) spec with typed models,
