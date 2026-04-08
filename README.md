@@ -3,9 +3,8 @@ title: Openenv Bug Triage
 emoji: 🐛
 colorFrom: blue
 colorTo: green
-sdk: gradio
-sdk_version: "5.23.0"
-app_file: app.py
+sdk: docker
+app_port: 7860
 pinned: false
 tags:
   - openenv
@@ -16,16 +15,16 @@ tags:
 # OpenEnv — Bug Report Triage
 
 An AI agent environment simulating real-world GitHub bug report triage.
-Implements the full [OpenEnv](https://huggingface.co/openenv) spec with typed models,
-`step()` / `reset()` / `state()` API, and programmatic graders.
+Implements the full OpenEnv spec with typed models, `step()` / `reset()` / `state()` API.
 
-## Motivation
+## Endpoints
 
-Every active open-source project drowns in bug reports. Maintainers spend hours
-triaging: is this valid? duplicate? which team? how urgent? This environment
-lets AI agents learn and be benchmarked on that exact task.
-
----
+| Method | Path | Description |
+|---|---|---|
+| POST | `/reset` | Start new episode, returns initial observation |
+| POST | `/step` | Submit action, returns observation + reward + done |
+| GET | `/state` | Current episode snapshot |
+| GET | `/health` | Health check |
 
 ## Observation Space
 
@@ -33,7 +32,7 @@ lets AI agents learn and be benchmarked on that exact task.
 |---|---|---|
 | `id` | `str` | Unique report ID |
 | `title` | `str` | Issue title |
-| `body` | `str` | Issue body (truncated to 600 chars) |
+| `body` | `str` | Issue body |
 | `author` | `str` | Reporter username |
 | `labels` | `list[str]` | Existing labels |
 | `repo` | `str` | Repository name |
@@ -58,67 +57,22 @@ lets AI agents learn and be benchmarked on that exact task.
 | team correct | 0.15 | Binary |
 | critical to wontfix penalty | -0.20 | Dangerous misclassification |
 
----
-
 ## Tasks
 
-| ID | Difficulty | Reports | Random Agent | GPT-4o-mini |
-|---|---|---|---|---|
-| `validity-check-v1` | Easy | 25 | 0.268 | ~0.82 |
-
-Dataset: real GitHub issues from `fastapi` and `numpy`, plus hand-crafted edge cases.
-
----
+| ID | Difficulty | Reports | Random Agent |
+|---|---|---|---|
+| `validity-check-v1` | Easy | 25 | 0.268 |
 
 ## Setup
 
 ```bash
-pip install -e .
-
-python scripts/baseline.py --agent random
-
-OPENAI_API_KEY=sk-... python scripts/baseline.py --agent llm
-
-python app.py
+pip install -r requirements.txt
+PYTHONPATH=. uvicorn app:app --reload
 ```
 
 ## Docker
 
 ```bash
 docker build -t openenv-bug-triage .
-docker run openenv-bug-triage
-```
-
----
-
-## Write Your Own Agent
-
-```python
-from env.models import Observation, Action
-
-def act(obs: Observation) -> Action:
-    return Action(
-        verdict="valid",
-        severity="medium",
-        team="backend",
-        needs_repro=False,
-    )
-```
-
-Plug into the env:
-
-```python
-from env.bugreport_env import BugReportEnv
-from tasks.validity_check.grader import score_action
-
-env = BugReportEnv("tasks/validity_check/reports.json", grader_fn=score_action)
-obs = env.reset(seed=42)
-done = False
-
-while not done:
-    action = act(obs)
-    obs, reward, done, info = env.step(action)
-    print(reward.score, reward.explanation)
-
-print("Final:", env.state()["mean_reward"])
+docker run -p 7860:7860 openenv-bug-triage
 ```

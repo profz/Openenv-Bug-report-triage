@@ -4,11 +4,10 @@ ENV PYTHONUNBUFFERED=1
 ENV PYTHONPATH=/app
 WORKDIR /app
 
-COPY pyproject.toml .
-RUN pip install --no-cache-dir hatchling && pip install --no-cache-dir -e .
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-# Default: run baseline with random agent (no API key needed)
-# Override: docker run -e OPENAI_API_KEY=sk-... image python scripts/baseline.py --agent llm
-CMD ["python", "scripts/baseline.py", "--agent", "random"]
+EXPOSE 7860
+CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "7860"]
