@@ -1,0 +1,253 @@
+[
+  {
+    "id": "001",
+    "title": "HTTP 422 Unprocessable Entity when sending nested Pydantic model",
+    "body": "When I send a POST request with a nested Pydantic model, FastAPI returns 422. Works fine with flat models. Python 3.11, FastAPI 0.104.\n\n```python\nclass Inner(BaseModel):\n    value: int\n\nclass Outer(BaseModel):\n    inner: Inner\n```\n\nRequest body: `{\"inner\": {\"value\": 1}}` → 422",
+    "author": "dev_user_1",
+    "labels": ["bug"],
+    "repo": "fastapi",
+    "comment_count": 4,
+    "code_snippet": "class Inner(BaseModel):\n    value: int",
+    "ground_truth": {"verdict": "valid", "severity": "high", "team": "backend"}
+  },
+  {
+    "id": "002",
+    "title": "Same as #001 - nested model 422 error",
+    "body": "I have the exact same issue as reported in #001. Nested Pydantic models return 422. Closing in favor of that issue.",
+    "author": "another_user",
+    "labels": ["duplicate"],
+    "repo": "fastapi",
+    "comment_count": 1,
+    "ground_truth": {"verdict": "duplicate", "severity": "medium", "team": "backend"}
+  },
+  {
+    "id": "003",
+    "title": "np.array comparison with None raises FutureWarning",
+    "body": "Comparing a numpy array to None raises a FutureWarning in numpy 1.25+. This used to work silently.\n\n```python\nimport numpy as np\narr = np.array([1, 2, 3])\nresult = arr == None  # FutureWarning\n```",
+    "author": "numpy_user_42",
+    "labels": ["bug", "deprecation"],
+    "repo": "numpy",
+    "comment_count": 7,
+    "ground_truth": {"verdict": "valid", "severity": "medium", "team": "backend"}
+  },
+  {
+    "id": "004",
+    "title": "Add dark mode support",
+    "body": "It would be great if the documentation website had a dark mode toggle. My eyes hurt at night.",
+    "author": "darkmode_fan",
+    "labels": ["enhancement"],
+    "repo": "fastapi",
+    "comment_count": 2,
+    "ground_truth": {"verdict": "wontfix", "severity": "low", "team": "docs"}
+  },
+  {
+    "id": "005",
+    "title": "Memory leak when using WebSocket connections at scale",
+    "body": "Running 10,000 concurrent WebSocket connections causes memory usage to grow unboundedly. After 2 hours the process OOMs. Profiler shows FastAPI's connection manager retaining references after disconnect.\n\nReproduced on: FastAPI 0.103, uvicorn 0.24, Python 3.11, Linux",
+    "author": "backend_engineer",
+    "labels": ["bug", "performance"],
+    "repo": "fastapi",
+    "comment_count": 12,
+    "ground_truth": {"verdict": "valid", "severity": "critical", "team": "backend"}
+  },
+  {
+    "id": "006",
+    "title": "How do I add authentication?",
+    "body": "I want to add JWT authentication to my FastAPI app. How do I do this? I've tried looking at the docs but I'm confused.",
+    "author": "newbie_dev",
+    "labels": ["question"],
+    "repo": "fastapi",
+    "comment_count": 3,
+    "ground_truth": {"verdict": "needs-info", "severity": "low", "team": "docs"}
+  },
+  {
+    "id": "007",
+    "title": "np.loadtxt fails silently on malformed CSV with mixed dtypes",
+    "body": "When loading a CSV that has mixed integer and string columns, np.loadtxt silently skips rows instead of raising an error. Expected: ValueError. Got: partial array with no warning.",
+    "author": "data_scientist_99",
+    "labels": ["bug"],
+    "repo": "numpy",
+    "comment_count": 5,
+    "ground_truth": {"verdict": "valid", "severity": "high", "team": "backend"}
+  },
+  {
+    "id": "008",
+    "title": "Dependency injection broken after upgrading to 0.105",
+    "body": "After upgrading FastAPI from 0.104 to 0.105, all my Depends() injections return None. Downgrading to 0.104 fixes it. No code changes on my end.",
+    "author": "upgrade_victim",
+    "labels": ["bug", "regression"],
+    "repo": "fastapi",
+    "comment_count": 18,
+    "ground_truth": {"verdict": "valid", "severity": "critical", "team": "backend"}
+  },
+  {
+    "id": "009",
+    "title": "typo in docs: 'recieve' should be 'receive'",
+    "body": "In the tutorial page on request bodies, there's a typo: 'recieve' should be 'receive'. Line 42 of docs/tutorial/body.md",
+    "author": "grammar_police",
+    "labels": ["documentation"],
+    "repo": "fastapi",
+    "comment_count": 0,
+    "ground_truth": {"verdict": "valid", "severity": "low", "team": "docs"}
+  },
+  {
+    "id": "010",
+    "title": "SQL injection possible via unsanitized query parameter",
+    "body": "The example in the advanced tutorial passes user input directly to a raw SQL query without sanitization. While this is example code, it teaches bad practices and could be copy-pasted into production.\n\nAffected file: docs/advanced/sql.md",
+    "author": "security_researcher",
+    "labels": ["security", "documentation"],
+    "repo": "fastapi",
+    "comment_count": 6,
+    "ground_truth": {"verdict": "valid", "severity": "high", "team": "security"}
+  },
+  {
+    "id": "011",
+    "title": "np.fft.fft returns wrong results on odd-length arrays",
+    "body": "FFT on odd-length arrays gives incorrect output compared to scipy.fft and MATLAB. Even-length arrays are correct.\n\n```python\nimport numpy as np\narr = np.array([1.0, 2.0, 3.0])\nprint(np.fft.fft(arr))  # wrong\n```",
+    "author": "signal_proc_dev",
+    "labels": ["bug"],
+    "repo": "numpy",
+    "comment_count": 9,
+    "ground_truth": {"verdict": "valid", "severity": "critical", "team": "backend"}
+  },
+  {
+    "id": "012",
+    "title": "Request body not validated when Content-Type header is missing",
+    "body": "If a client sends a POST request without the Content-Type: application/json header, FastAPI skips validation entirely and passes None to the handler. Should raise 422.",
+    "author": "api_tester",
+    "labels": ["bug"],
+    "repo": "fastapi",
+    "comment_count": 3,
+    "ground_truth": {"verdict": "valid", "severity": "medium", "team": "backend"}
+  },
+  {
+    "id": "013",
+    "title": "Make error messages more user friendly",
+    "body": "The 422 validation error messages are hard to understand for non-developers. Can they be simplified?",
+    "author": "ux_person",
+    "labels": ["enhancement"],
+    "repo": "fastapi",
+    "comment_count": 1,
+    "ground_truth": {"verdict": "needs-info", "severity": "low", "team": "frontend"}
+  },
+  {
+    "id": "014",
+    "title": "np.sort is 3x slower than expected on already-sorted arrays",
+    "body": "Sorting a pre-sorted array of 1M floats takes 450ms with np.sort but only 150ms with Python's built-in sorted(). Expected numpy to be faster. Is this a known limitation?\n\nnumpy 1.26.0, Python 3.11, Linux x86_64",
+    "author": "perf_obsessed",
+    "labels": ["performance"],
+    "repo": "numpy",
+    "comment_count": 4,
+    "ground_truth": {"verdict": "valid", "severity": "medium", "team": "backend"}
+  },
+  {
+    "id": "015",
+    "title": "App crashes with no error message on startup",
+    "body": "My app crashes on startup but there's no error message. I'm using FastAPI with uvicorn.",
+    "author": "confused_dev",
+    "labels": [],
+    "repo": "fastapi",
+    "comment_count": 0,
+    "ground_truth": {"verdict": "needs-info", "severity": "medium", "team": "backend"}
+  },
+  {
+    "id": "016",
+    "title": "Background tasks not executing when using TestClient",
+    "body": "BackgroundTasks don't run when using FastAPI's TestClient. They run fine in production with uvicorn. This makes testing background jobs impossible without spinning up a real server.\n\nReproducible with minimal example.",
+    "author": "test_engineer",
+    "labels": ["bug", "testing"],
+    "repo": "fastapi",
+    "comment_count": 8,
+    "ground_truth": {"verdict": "valid", "severity": "high", "team": "backend"}
+  },
+  {
+    "id": "017",
+    "title": "Same WebSocket memory leak as #005",
+    "body": "Experiencing the same WebSocket memory leak described in issue #005. 10k connections, OOM after ~90 minutes.",
+    "author": "ops_engineer",
+    "labels": ["duplicate"],
+    "repo": "fastapi",
+    "comment_count": 2,
+    "ground_truth": {"verdict": "duplicate", "severity": "critical", "team": "backend"}
+  },
+  {
+    "id": "018",
+    "title": "np.unique breaks on arrays containing NaN",
+    "body": "np.unique treats each NaN as distinct, so an array with multiple NaN values returns multiple NaN entries. IEEE 754 says NaN != NaN but for a 'unique' operation this is counterintuitive and undocumented.",
+    "author": "numerical_dev",
+    "labels": ["bug", "nan-handling"],
+    "repo": "numpy",
+    "comment_count": 11,
+    "ground_truth": {"verdict": "valid", "severity": "medium", "team": "backend"}
+  },
+  {
+    "id": "019",
+    "title": "Add GraphQL support",
+    "body": "FastAPI should natively support GraphQL. Currently you have to use strawberry or graphene as separate packages. This should be built in.",
+    "author": "graphql_advocate",
+    "labels": ["enhancement"],
+    "repo": "fastapi",
+    "comment_count": 14,
+    "ground_truth": {"verdict": "wontfix", "severity": "low", "team": "backend"}
+  },
+  {
+    "id": "020",
+    "title": "CORS headers missing on 422 validation error responses",
+    "body": "When a request fails validation (422), the CORS headers configured via add_middleware(CORSMiddleware) are not included in the response. This causes browser clients to fail silently instead of showing the validation error.\n\nFastAPI 0.104, Python 3.10",
+    "author": "frontend_dev",
+    "labels": ["bug", "cors"],
+    "repo": "fastapi",
+    "comment_count": 7,
+    "ground_truth": {"verdict": "valid", "severity": "high", "team": "frontend"}
+  },
+  {
+    "id": "021",
+    "title": "np.histogram edge case with identical min/max values",
+    "body": "When all values in an array are identical, np.histogram raises ValueError: max must be larger than min. Should return a valid histogram with all count in the first bin.",
+    "author": "stats_user",
+    "labels": ["bug"],
+    "repo": "numpy",
+    "comment_count": 3,
+    "ground_truth": {"verdict": "valid", "severity": "medium", "team": "backend"}
+  },
+  {
+    "id": "022",
+    "title": "Docs say to use `async def` everywhere but this tanks performance",
+    "body": "The getting started guide recommends using async def for all route handlers. But if the handler does CPU-bound work, this blocks the event loop. The docs should clarify when to use def vs async def.",
+    "author": "perf_engineer",
+    "labels": ["documentation"],
+    "repo": "fastapi",
+    "comment_count": 5,
+    "ground_truth": {"verdict": "valid", "severity": "medium", "team": "docs"}
+  },
+  {
+    "id": "023",
+    "title": "Private API key visible in OpenAPI schema",
+    "body": "When using APIKeyHeader as a security scheme, the example value in the auto-generated OpenAPI docs shows the literal string 'your-api-key-here' which could mislead developers. Worse, if someone misconfigures it, real keys could appear in the schema endpoint which is often publicly accessible.",
+    "author": "appsec_engineer",
+    "labels": ["security"],
+    "repo": "fastapi",
+    "comment_count": 4,
+    "ground_truth": {"verdict": "valid", "severity": "high", "team": "security"}
+  },
+  {
+    "id": "024",
+    "title": "Can't reproduce #007 - loadtxt works fine for me",
+    "body": "I tried to reproduce the issue in #007 with np.loadtxt and mixed dtypes and it works fine on my machine. Numpy 1.24, Python 3.9, macOS.",
+    "author": "helpful_user",
+    "labels": [],
+    "repo": "numpy",
+    "comment_count": 2,
+    "ground_truth": {"verdict": "needs-info", "severity": "medium", "team": "backend"}
+  },
+  {
+    "id": "025",
+    "title": "Router prefix not applied to WebSocket routes",
+    "body": "When using APIRouter with a prefix, HTTP routes correctly get the prefix but WebSocket routes do not. Example: prefix='/ws' → HTTP routes get /ws/endpoint but WebSocket route stays at /endpoint.\n\nFastAPI 0.103, Python 3.11. Minimal repro attached.",
+    "author": "ws_developer",
+    "labels": ["bug"],
+    "repo": "fastapi",
+    "comment_count": 6,
+    "ground_truth": {"verdict": "valid", "severity": "high", "team": "backend"}
+  }
+]
