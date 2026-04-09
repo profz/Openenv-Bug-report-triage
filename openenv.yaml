@@ -1,51 +1,22 @@
+spec_version: 1
 name: openenv-bug-triage
-version: 0.1.0
-task: bug-report-triage
-description: >
-  An AI agent environment simulating the real-world task of triaging GitHub bug reports.
-  The agent reads incoming issues and decides verdict, severity, team ownership, and
-  whether reproduction steps are needed. Scores 0.0–1.0 on each report with partial credit.
-
-observation_space:
-  type: structured
-  fields:
-    id:            {type: string, description: "Unique report identifier"}
-    title:         {type: string, description: "Issue title"}
-    body:          {type: string, description: "Full issue body, max 600 chars passed to agent"}
-    author:        {type: string, description: "GitHub username of reporter"}
-    labels:        {type: list[string], description: "Existing labels on the issue"}
-    repo:          {type: string, description: "Repository name"}
-    comment_count: {type: int, description: "Number of existing comments"}
-    code_snippet:  {type: string, optional: true, description: "Extracted code block if present"}
-
-action_space:
-  type: structured
-  fields:
-    verdict:     {type: enum, values: [valid, duplicate, needs-info, wontfix]}
-    severity:    {type: enum, values: [critical, high, medium, low]}
-    team:        {type: enum, values: [frontend, backend, infra, docs, security]}
-    needs_repro: {type: bool}
-
-reward:
-  type: float
-  range: [0.0, 1.0]
-  breakdown:
-    verdict:  0.60
-    severity: 0.25  # partial credit within ±1 level = 0.10
-    team:     0.15
-  penalties:
-    critical_wontfix: -0.20
+type: environment
+runtime: docker
+app: server/app.py
+port: 7860
 
 tasks:
   - id: validity-check-v1
     difficulty: easy
-    description: >
-      25 reports from fastapi and numpy repos. Agent classifies each as
-      valid/duplicate/needs-info/wontfix with severity and team routing.
-    dataset: tasks/validity_check/reports.json
+    description: "25 reports, classify verdict + severity + team"
     grader: tasks/validity_check/grader.py
-    baseline_scores:
-      random_agent: ~0.28
-      gpt4o_mini:   ~0.82
 
-tags: [openenv, bug-triage, nlp, classification]
+  - id: severity-routing-v1
+    difficulty: medium
+    description: "25 reports, emphasis on correct severity routing"
+    grader: tasks/severity_routing/grader.py
+
+  - id: full-triage-v1
+    difficulty: hard
+    description: "25 reports, full action space including needs_repro"
+    grader: tasks/full_triage/grader.py
