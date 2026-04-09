@@ -38,3 +38,5 @@ def score_action(action: Action, ground_truth: dict) -> Reward:
         breakdown=breakdown,
         explanation=f"verdict={v} severity={s} team={t}",
     )
+
+grade = score_action
