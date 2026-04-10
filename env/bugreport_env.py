@@ -8,9 +8,9 @@ class BugReportEnv(BaseEnv):
     def __init__(self, task_path: str, grader_fn=None):
         self.task_path = Path(task_path)
         self.grader_fn = grader_fn
-        self.reports: list[dict] = []
+        self.reports = []
         self.index = 0
-        self.history: list[tuple] = []
+        self.history = []
         self.cumulative_reward = 0.0
 
     def reset(self, seed: int = 42) -> Observation:
@@ -22,9 +22,16 @@ class BugReportEnv(BaseEnv):
         self.cumulative_reward = 0.0
         return self._obs(self.reports[0])
 
-    def step(self, action: Action) -> tuple[Observation, Reward, bool, dict]:
+    def step(self, action: Action) -> tuple:
         report = self.reports[self.index]
-        reward = self.grader_fn(action, report["ground_truth"])
+        result = self.grader_fn(action, report["ground_truth"])
+
+        # handle both dict and Reward object
+        if isinstance(result, dict):
+            reward = Reward(**result)
+        else:
+            reward = result
+
         self.cumulative_reward += reward.score
         self.history.append((report["id"], action.model_dump(), reward.score))
         self.index += 1
