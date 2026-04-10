@@ -1,5 +1,4 @@
 from pydantic import BaseModel
-from typing import Any
 
 class Action(BaseModel):
     verdict: str = "needs-info"
@@ -14,26 +13,21 @@ class Reward(BaseModel):
 
 SEVERITY = ["low", "medium", "high", "critical"]
 
-def score_action(action: Any, ground_truth: dict) -> Reward:
-    score = 0.0
-    breakdown = {}
-    breakdown["verdict"] = 0.6 if action.verdict == ground_truth["verdict"] else 0.0
-    score += breakdown["verdict"]
-    if ground_truth.get("severity") == "critical" and action.verdict == "wontfix":
-        score -= 0.2
-        breakdown["critical_wontfix_penalty"] = -0.2
-    pi = SEVERITY.index(action.severity) if action.severity in SEVERITY else 0
-    ti = SEVERITY.index(ground_truth["severity"]) if ground_truth.get("severity") in SEVERITY else 0
-    if pi == ti:
-        breakdown["severity"] = 0.25
-    elif abs(pi - ti) == 1:
-        breakdown["severity"] = 0.1
-    else:
-        breakdown["severity"] = 0.0
-    score += breakdown["severity"]
-    breakdown["team"] = 0.15 if action.team == ground_truth.get("team") else 0.0
-    score += breakdown["team"]
-    return Reward(score=round(max(0.0, min(1.0, score)), 3), breakdown=breakdown,
-                  explanation=f"verdict={'✓' if breakdown['verdict'] else '✗'} severity={'✓' if breakdown.get('severity')==0.25 else '✗'} team={'✓' if breakdown['team'] else '✗'}")
+def score_action(action, ground_truth: dict) -> dict:
+    s = 0.0
+    bd = {}
+    bd["verdict"] = 0.6 if action.verdict == ground_truth["verdict"] else 0.0
+    s += bd["verdict"]
+    if ground_truth["severity"] == "critical" and action.verdict == "wontfix":
+        bd["penalty"] = -0.2
+        s -= 0.2
+    pi = SEVERITY.index(action.severity)
+    ti = SEVERITY.index(ground_truth["severity"])
+    bd["severity"] = 0.25 if pi == ti else (0.1 if abs(pi-ti)==1 else 0.0)
+    s += bd["severity"]
+    bd["team"] = 0.15 if action.team == ground_truth["team"] else 0.0
+    s += bd["team"]
+    score = round(max(0.0, min(1.0, s)), 3)
+    return {"score": score, "breakdown": bd, "explanation": f"v={'✓' if bd['verdict'] else '✗'} s={'✓' if bd['severity']==0.25 else '✗'} t={'✓' if bd['team'] else '✗'}"}
 
 grade = score_action
