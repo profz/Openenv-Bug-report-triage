@@ -25,3 +25,16 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+@app.get("/graders")
+def list_graders():
+    from tasks.validity_check.grader import grade as g1
+    from tasks.severity_routing.grader import grade as g2
+    from tasks.full_triage.grader import grade as g3
+    return {
+        "graders": [
+            {"task_id": "validity-check-v1",   "callable": "tasks.validity_check.grader.grade",   "ready": callable(g1)},
+            {"task_id": "severity-routing-v1", "callable": "tasks.severity_routing.grader.grade", "ready": callable(g2)},
+            {"task_id": "full-triage-v1",      "callable": "tasks.full_triage.grader.grade",      "ready": callable(g3)},
+        ]
+    }
