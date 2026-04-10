@@ -8,15 +8,15 @@ port: 7860
 tasks:
   - id: validity-check-v1
     difficulty: easy
-    description: "25 reports, classify verdict + severity + team"
-    grader: tasks/validity_check/grader.py
+    description: "Classify bug reports as valid/duplicate/needs-info/wontfix"
+    grader: graders.py
 
   - id: severity-routing-v1
     difficulty: medium
-    description: "25 reports, emphasis on correct severity routing"
-    grader: tasks/severity_routing/grader.py
+    description: "Route bug reports with emphasis on severity classification"
+    grader: graders.py
 
   - id: full-triage-v1
     difficulty: hard
-    description: "25 reports, full action space including needs_repro"
-    grader: tasks/full_triage/grader.py
+    description: "Full triage including verdict, severity, team, needs_repro"
+    grader: graders.py
