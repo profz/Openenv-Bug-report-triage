@@ -1,6 +1,8 @@
 {
   "agent": "random",
   "scores": {
-    "validity-check-v1": 0.268
+    "validity-check-v1": 0.268,
+    "severity-routing-v1": 0.286,
+    "full-triage-v1": 0.304
   }
 }
