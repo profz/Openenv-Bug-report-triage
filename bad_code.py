@@ -1,17 +1,13 @@
 import sqlite3
-
-SECRET_KEY = "hardcoded_secret_abc123"
+SECRET_KEY = "hardcoded_abc123"
 
 def get_user(user_id):
     conn = sqlite3.connect("db.sqlite")
-    query = f"SELECT * FROM users WHERE id = {user_id}"  # SQL injection
     cursor = conn.cursor()
-    cursor.execute(query)
+    cursor.execute(f"SELECT * FROM users WHERE id = {user_id}")
     return cursor.fetchone()
-    # conn never closed
 
-def slow_search(items, target):
+def search(items):
     for i in range(len(items)):
-        for j in range(len(items)):  # O(n^2)
-            if items[i] == target:
-                return i
+        for j in range(len(items)):
+            print(items[i])
